@@ -1,0 +1,109 @@
+{
+  "_framework-B54YUV96.js": {
+    "file": "locomotivetrader/_next/static/chunks/framework-B54YUV96.js",
+    "name": "framework",
+    "imports": [
+      "_rolldown-runtime-CqEw7cUO.js"
+    ]
+  },
+  "_rolldown-runtime-CqEw7cUO.js": {
+    "file": "locomotivetrader/_next/static/chunks/rolldown-runtime-CqEw7cUO.js",
+    "name": "rolldown-runtime"
+  },
+  "_shield-check-AGjh6j48.js": {
+    "file": "locomotivetrader/_next/static/chunks/shield-check-AGjh6j48.js",
+    "name": "shield-check",
+    "imports": [
+      "_trending-up-B-t0zXoB.js"
+    ]
+  },
+  "_trending-up-B-t0zXoB.js": {
+    "file": "locomotivetrader/_next/static/chunks/trending-up-B-t0zXoB.js",
+    "name": "trending-up",
+    "imports": [
+      "_rolldown-runtime-CqEw7cUO.js",
+      "_framework-B54YUV96.js"
+    ]
+  },
+  "_users-BYT6beGY.js": {
+    "file": "locomotivetrader/_next/static/chunks/users-BYT6beGY.js",
+    "name": "users",
+    "imports": [
+      "_trending-up-B-t0zXoB.js"
+    ]
+  },
+  "_x-BiRxkp79.js": {
+    "file": "locomotivetrader/_next/static/chunks/x-BiRxkp79.js",
+    "name": "x",
+    "imports": [
+      "_trending-up-B-t0zXoB.js"
+    ]
+  },
+  "app/Marketplace.tsx": {
+    "file": "locomotivetrader/_next/static/chunks/Marketplace-_gZ1-vlf.js",
+    "name": "Marketplace",
+    "src": "app/Marketplace.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-CqEw7cUO.js",
+      "_trending-up-B-t0zXoB.js",
+      "_shield-check-AGjh6j48.js",
+      "_x-BiRxkp79.js",
+      "_framework-B54YUV96.js"
+    ]
+  },
+  "app/admin/AdminDashboard.tsx": {
+    "file": "locomotivetrader/_next/static/chunks/AdminDashboard-Cj4q94Oz.js",
+    "name": "AdminDashboard",
+    "src": "app/admin/AdminDashboard.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-CqEw7cUO.js",
+      "_trending-up-B-t0zXoB.js",
+      "_users-BYT6beGY.js",
+      "_shield-check-AGjh6j48.js",
+      "_framework-B54YUV96.js"
+    ]
+  },
+  "app/vendor/VendorDashboard.tsx": {
+    "file": "locomotivetrader/_next/static/chunks/VendorDashboard-Bvz6_zCx.js",
+    "name": "VendorDashboard",
+    "src": "app/vendor/VendorDashboard.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-CqEw7cUO.js",
+      "_trending-up-B-t0zXoB.js",
+      "_users-BYT6beGY.js",
+      "_x-BiRxkp79.js",
+      "_framework-B54YUV96.js"
+    ]
+  },
+  "node_modules/vinext/dist/shims/layout-segment-context.js": {
+    "file": "locomotivetrader/_next/static/chunks/layout-segment-context-cIDmjrvj.js",
+    "name": "layout-segment-context",
+    "src": "node_modules/vinext/dist/shims/layout-segment-context.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_rolldown-runtime-CqEw7cUO.js",
+      "virtual:vinext-app-browser-entry",
+      "_framework-B54YUV96.js"
+    ]
+  },
+  "virtual:vinext-app-browser-entry": {
+    "file": "locomotivetrader/_next/static/chunks/index-CTx10Ta1.js",
+    "name": "index",
+    "src": "virtual:vinext-app-browser-entry",
+    "isEntry": true,
+    "imports": [
+      "_rolldown-runtime-CqEw7cUO.js",
+      "_framework-B54YUV96.js"
+    ],
+    "dynamicImports": [
+      "app/admin/AdminDashboard.tsx",
+      "virtual:vinext-app-browser-entry",
+      "node_modules/vinext/dist/shims/layout-segment-context.js",
+      "app/Marketplace.tsx",
+      "app/vendor/VendorDashboard.tsx"
+    ]
+  }
+}
