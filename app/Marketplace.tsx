@@ -46,7 +46,6 @@ type Listing = {
   condition: string;
   region: string;
   location: string;
-  price: string;
   quantity: number;
   partNumber: string;
   models: string[];
@@ -66,7 +65,6 @@ const listings: Listing[] = [
     condition: "Remanufactured",
     region: "United States",
     location: "Chicago, Illinois",
-    price: "$18,500",
     quantity: 4,
     partNumber: "9332901",
     models: ["GP38", "GP40", "SD40-2"],
@@ -85,7 +83,6 @@ const listings: Listing[] = [
     condition: "Rebuildable Core",
     region: "United States",
     location: "Houston, Texas",
-    price: "Request price",
     quantity: 2,
     partNumber: "7FDL16-CORE",
     models: ["C40-8", "C44-9W", "AC4400CW"],
@@ -104,7 +101,6 @@ const listings: Listing[] = [
     condition: "Rebuilt",
     region: "United States",
     location: "Birmingham, Alabama",
-    price: "$14,800",
     quantity: 6,
     partNumber: "5GE752AH",
     models: ["Dash 8", "Dash 9", "AC4400"],
@@ -122,7 +118,6 @@ const listings: Listing[] = [
     condition: "New Surplus",
     region: "Canada",
     location: "Calgary, Alberta",
-    price: "$6,250",
     quantity: 8,
     partNumber: "40020287",
     models: ["SD70", "SD75", "GP60"],
@@ -140,7 +135,6 @@ const listings: Listing[] = [
     condition: "Remanufactured",
     region: "United States",
     location: "Altoona, Pennsylvania",
-    price: "$2,175 ea.",
     quantity: 24,
     partNumber: "40021310",
     models: ["GP38", "GP40", "SD40"],
@@ -158,7 +152,6 @@ const listings: Listing[] = [
     condition: "New",
     region: "United States",
     location: "Elkhart, Indiana",
-    price: "$985",
     quantity: 12,
     partNumber: "NYAB-26C-110",
     models: ["GP Series", "SD Series", "SW Series"],
@@ -451,7 +444,6 @@ export default function Home() {
                     <div className="listing-location"><MapPin size={15} /> {listing.location} <span>·</span> Qty {listing.quantity}</div>
                     <div className="vendor-line"><BadgeCheck size={16} /><span><strong>{listing.vendor}</strong><small>{listing.vendorSince}</small></span></div>
                     <div className="listing-footer">
-                      <strong>{listing.price}</strong>
                       <div>
                         <button className={saved.has(listing.id) ? "save-button saved" : "save-button"} type="button" onClick={() => toggleSaved(listing.id)} aria-label={saved.has(listing.id) ? "Remove saved listing" : "Save listing"}><Heart size={18} fill={saved.has(listing.id) ? "currentColor" : "none"} /></button>
                         <button className="button button-outline button-small" type="button" onClick={() => { setSelectedListing(listing); setMessageSent(false); }}>View & contact</button>
@@ -515,9 +507,9 @@ export default function Home() {
         <div className="shell">
           <div className="section-heading centered-heading"><div className="eyebrow"><span /> Vendor plans</div><h2>List more. Pay the same.</h2><p>Simple subscriptions built around inventory volume—not sales commission.</p><div className="trial-pill"><Sparkles size={15} /> First month free for founding vendors</div></div>
           <div className="pricing-grid">
-            <article className="price-card"><div className="plan-name">Starter</div><p>For specialists testing a new sales channel.</p><div className="price"><strong>$99</strong><span>/ month</span></div><ul><li><Check size={16} /> Up to 25 active listings</li><li><Check size={16} /> Direct buyer inquiries</li><li><Check size={16} /> Vendor profile</li><li><Check size={16} /> Basic listing analytics</li></ul><a className="button button-outline button-full" href={route("/vendor/")}>Start free month</a></article>
-            <article className="price-card popular"><div className="popular-flag">Most popular</div><div className="plan-name">Growth</div><p>For active suppliers with rotating inventory.</p><div className="price"><strong>$179</strong><span>/ month</span></div><ul><li><Check size={16} /> Up to 150 active listings</li><li><Check size={16} /> 3 featured boosts / month</li><li><Check size={16} /> Premium vendor badge</li><li><Check size={16} /> Lead & search analytics</li><li><Check size={16} /> Priority search placement</li></ul><a className="button button-orange button-full" href={route("/vendor/")}>Start free month</a></article>
-            <article className="price-card"><div className="plan-name">Network</div><p>For high-volume and multi-location vendors.</p><div className="price"><strong>$299</strong><span>/ month</span></div><ul><li><Check size={16} /> Unlimited active listings</li><li><Check size={16} /> 10 featured boosts / month</li><li><Check size={16} /> Multiple team members</li><li><Check size={16} /> Inventory feed imports</li><li><Check size={16} /> Priority support</li></ul><a className="button button-outline button-full" href={route("/vendor/")}>Start free month</a></article>
+            <article className="price-card"><div className="plan-name">Starter</div><p>For specialists testing a new sales channel.</p><ul><li><Check size={16} /> Up to 25 active listings</li><li><Check size={16} /> Direct buyer inquiries</li><li><Check size={16} /> Vendor profile</li><li><Check size={16} /> Basic listing analytics</li></ul><a className="button button-outline button-full" href={route("/vendor/")}>Start free month</a></article>
+            <article className="price-card popular"><div className="popular-flag">Most popular</div><div className="plan-name">Growth</div><p>For active suppliers with rotating inventory.</p><ul><li><Check size={16} /> Up to 150 active listings</li><li><Check size={16} /> 3 featured boosts / month</li><li><Check size={16} /> Premium vendor badge</li><li><Check size={16} /> Lead & search analytics</li><li><Check size={16} /> Priority search placement</li></ul><a className="button button-orange button-full" href={route("/vendor/")}>Start free month</a></article>
+            <article className="price-card"><div className="plan-name">Network</div><p>For high-volume and multi-location vendors.</p><ul><li><Check size={16} /> Unlimited active listings</li><li><Check size={16} /> 10 featured boosts / month</li><li><Check size={16} /> Multiple team members</li><li><Check size={16} /> Inventory feed imports</li><li><Check size={16} /> Priority support</li></ul><a className="button button-outline button-full" href={route("/vendor/")}>Start free month</a></article>
           </div>
           <p className="pricing-note">All plans include a 30-day trial. No setup fee. Cancel anytime. Listings are hidden—not deleted—if a subscription lapses.</p>
         </div>
@@ -554,7 +546,6 @@ export default function Home() {
               <div className="modal-detail">
                 <div className="listing-kicker"><span>{selectedListing.category}</span><small>Posted {selectedListing.posted}</small></div>
                 <h2 id="listing-modal-title">{selectedListing.title}</h2>
-                <div className="modal-price">{selectedListing.price}</div>
                 <div className="spec-grid"><div><span>Part number</span><strong>{selectedListing.partNumber}</strong></div><div><span>Condition</span><strong>{selectedListing.condition}</strong></div><div><span>Quantity</span><strong>{selectedListing.quantity} available</strong></div><div><span>Location</span><strong>{selectedListing.location}</strong></div></div>
                 <h3>Compatible models</h3><div className="model-tags">{selectedListing.models.map((model) => <span key={model}>{model}</span>)}</div>
                 <h3>About this part</h3><p>{selectedListing.description}</p>
