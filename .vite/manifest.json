@@ -40,7 +40,7 @@
     ]
   },
   "app/Marketplace.tsx": {
-    "file": "locomotivetrader/_next/static/chunks/Marketplace-_gZ1-vlf.js",
+    "file": "locomotivetrader/_next/static/chunks/Marketplace-aP6HiC2A.js",
     "name": "Marketplace",
     "src": "app/Marketplace.tsx",
     "isDynamicEntry": true,
@@ -79,7 +79,7 @@
     ]
   },
   "node_modules/vinext/dist/shims/layout-segment-context.js": {
-    "file": "locomotivetrader/_next/static/chunks/layout-segment-context-cIDmjrvj.js",
+    "file": "locomotivetrader/_next/static/chunks/layout-segment-context-BEl512eh.js",
     "name": "layout-segment-context",
     "src": "node_modules/vinext/dist/shims/layout-segment-context.js",
     "isDynamicEntry": true,
@@ -90,7 +90,7 @@
     ]
   },
   "virtual:vinext-app-browser-entry": {
-    "file": "locomotivetrader/_next/static/chunks/index-CTx10Ta1.js",
+    "file": "locomotivetrader/_next/static/chunks/index-6DYIEcx-.js",
     "name": "index",
     "src": "virtual:vinext-app-browser-entry",
     "isEntry": true,
