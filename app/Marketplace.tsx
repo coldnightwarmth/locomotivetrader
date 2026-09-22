@@ -32,6 +32,7 @@ import {
   Zap,
 } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { listings, type Listing } from "./inventory";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const asset = (path: string) => `${BASE_PATH}${path}`;
@@ -39,141 +40,58 @@ const route = (path: string) => BASE_PATH
   ? `${BASE_PATH}${path.replace(/\/$/, "")}.html`
   : path;
 
-type Listing = {
-  id: number;
-  title: string;
-  category: string;
-  condition: string;
-  region: string;
-  location: string;
-  quantity: number;
-  partNumber: string;
-  models: string[];
-  vendor: string;
-  vendorSince: string;
-  image: string;
-  featured?: boolean;
-  posted: string;
-  description: string;
-};
-
-const listings: Listing[] = [
-  {
-    id: 1,
-    title: "EMD 645E3B Power Assembly",
-    category: "Engines",
-    condition: "Remanufactured",
-    region: "United States",
-    location: "Chicago, Illinois",
-    quantity: 4,
-    partNumber: "9332901",
-    models: ["GP38", "GP40", "SD40-2"],
-    vendor: "Midwest Rail Systems",
-    vendorSince: "Verified since 2019",
-    image: asset("/listings/power-assembly.jpg"),
-    featured: true,
-    posted: "2 hours ago",
-    description:
-      "Fully remanufactured 645E3B power assembly, dyno-tested and supplied with inspection documentation. Exchange core program available.",
-  },
-  {
-    id: 2,
-    title: "GE 7FDL16 Prime Mover",
-    category: "Engines",
-    condition: "Rebuildable Core",
-    region: "United States",
-    location: "Houston, Texas",
-    quantity: 2,
-    partNumber: "7FDL16-CORE",
-    models: ["C40-8", "C44-9W", "AC4400CW"],
-    vendor: "Gulf Coast Locomotive",
-    vendorSince: "Verified since 2016",
-    image: asset("/listings/prime-mover.jpg"),
-    featured: true,
-    posted: "Yesterday",
-    description:
-      "Complete take-out 7FDL16 prime movers available as rebuildable cores. Stored indoors and ready for inspection or export preparation.",
-  },
-  {
-    id: 3,
-    title: "GE 752 Traction Motor",
-    category: "Traction Motors",
-    condition: "Rebuilt",
-    region: "United States",
-    location: "Birmingham, Alabama",
-    quantity: 6,
-    partNumber: "5GE752AH",
-    models: ["Dash 8", "Dash 9", "AC4400"],
-    vendor: "Southern Traction & Electric",
-    vendorSince: "Verified since 2021",
-    image: asset("/listings/traction-motor.jpg"),
-    posted: "2 days ago",
-    description:
-      "Rebuilt GE 752 traction motor with new bearings, rewound armature, documented megger readings, and twelve-month service warranty.",
-  },
-  {
-    id: 4,
-    title: "EMD 710 Turbocharger Rotor Assembly",
-    category: "Turbochargers",
-    condition: "New Surplus",
-    region: "Canada",
-    location: "Calgary, Alberta",
-    quantity: 8,
-    partNumber: "40020287",
-    models: ["SD70", "SD75", "GP60"],
-    vendor: "Northline Components",
-    vendorSince: "Verified since 2018",
-    image: asset("/listings/turbocharger.jpg"),
-    posted: "3 days ago",
-    description:
-      "Unused surplus rotor assemblies for EMD 710 turbochargers. Preserved in sealed packaging with traceable inventory records.",
-  },
-  {
-    id: 5,
-    title: "EMD 645 Cylinder Heads — Lot of 12",
-    category: "Engine Components",
-    condition: "Remanufactured",
-    region: "United States",
-    location: "Altoona, Pennsylvania",
-    quantity: 24,
-    partNumber: "40021310",
-    models: ["GP38", "GP40", "SD40"],
-    vendor: "Keystone Diesel Works",
-    vendorSince: "Verified since 2017",
-    image: asset("/listings/engine-blocks.jpg"),
-    posted: "4 days ago",
-    description:
-      "Pressure-tested remanufactured cylinder heads with new valves, guides, and seats. Volume pricing available for lots of twelve or more.",
-  },
-  {
-    id: 6,
-    title: "26-C Brake Control Valve",
-    category: "Air & Brake",
-    condition: "New",
-    region: "United States",
-    location: "Elkhart, Indiana",
-    quantity: 12,
-    partNumber: "NYAB-26C-110",
-    models: ["GP Series", "SD Series", "SW Series"],
-    vendor: "Great Lakes Rail Supply",
-    vendorSince: "Verified since 2020",
-    image: asset("/listings/warehouse.jpg"),
-    posted: "5 days ago",
-    description:
-      "New 26-C compatible brake control valve assemblies with certificates of conformity. Same-day dispatch for stocked quantities.",
-  },
+const categoryDefinitions = [
+  { name: "Engines", icon: CircleGauge },
+  { name: "Engine Components", icon: Cog },
+  { name: "Traction Motors", icon: Zap },
+  { name: "Turbochargers", icon: TrendingUp },
+  { name: "Air & Brake", icon: SlidersHorizontal },
+  { name: "Electrical", icon: Bell },
+  { name: "Cooling & Lube", icon: Box },
+  { name: "Running Gear", icon: Wrench },
 ];
 
-const categories = [
-  { name: "Engines", count: 486, icon: CircleGauge },
-  { name: "Engine Components", count: 728, icon: Cog },
-  { name: "Traction Motors", count: 214, icon: Zap },
-  { name: "Turbochargers", count: 162, icon: TrendingUp },
-  { name: "Air & Brake", count: 339, icon: SlidersHorizontal },
-  { name: "Electrical", count: 512, icon: Bell },
-  { name: "Cooling & Lube", count: 284, icon: Box },
-  { name: "Running Gear", count: 193, icon: Wrench },
-];
+const categories = categoryDefinitions.map((category) => ({
+  ...category,
+  count: listings.filter((listing) => listing.category === category.name).length,
+}));
+
+const regions = [...new Set(listings.map((listing) => listing.region))].sort();
+const conditions = [...new Set(listings.map((listing) => listing.condition))].sort();
+const manufacturers = [...new Set(listings.map((listing) => listing.manufacturer))].sort();
+const compatibleModels = [...new Set(listings.flatMap((listing) => listing.models))].sort();
+const availabilityOptions = [...new Set(listings.map((listing) => listing.availability))].sort();
+
+function normalized(value: string) {
+  return value
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function searchableText(listing: Listing) {
+  const fields = [
+    listing.title,
+    listing.partNumber,
+    listing.partNumber.replace(/[^a-z0-9]/gi, ""),
+    listing.category,
+    listing.subcategory,
+    listing.manufacturer,
+    listing.builder,
+    listing.condition,
+    listing.region,
+    listing.location,
+    listing.engineFamily,
+    listing.application,
+    listing.availability,
+    listing.leadTime,
+    listing.vendor,
+    listing.description,
+    ...listing.models,
+    ...listing.keywords,
+  ];
+  return normalized(fields.join(" "));
+}
 
 const vendors = [
   {
@@ -204,6 +122,12 @@ export default function Home() {
   const [heroCategory, setHeroCategory] = useState("All categories");
   const [region, setRegion] = useState("All regions");
   const [condition, setCondition] = useState("All conditions");
+  const [manufacturer, setManufacturer] = useState("All manufacturers");
+  const [compatibleModel, setCompatibleModel] = useState("All models");
+  const [availability, setAvailability] = useState("All availability");
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [sortBy, setSortBy] = useState("Best match");
+  const [showCount, setShowCount] = useState(12);
   const [activeSearch, setActiveSearch] = useState("");
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [saved, setSaved] = useState<Set<number>>(new Set());
@@ -211,25 +135,45 @@ export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const results = useMemo(() => {
-    const needle = activeSearch.toLowerCase();
-    return listings.filter((listing) => {
-      const text = [
-        listing.title,
-        listing.partNumber,
-        listing.category,
-        listing.vendor,
-        ...listing.models,
-      ]
-        .join(" ")
-        .toLowerCase();
-      return (
-        (!needle || text.includes(needle)) &&
+    const normalizedQuery = normalized(activeSearch).trim();
+    const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
+    const compactQuery = normalizedQuery.replace(/[^a-z0-9]/g, "");
+
+    return listings
+      .map((listing) => {
+        const text = searchableText(listing);
+        const compactReference = normalized(listing.partNumber).replace(/[^a-z0-9]/g, "");
+        const title = normalized(listing.title);
+        let score = listing.featured ? 3 : 0;
+        if (normalizedQuery) {
+          if (compactReference === compactQuery) score += 100;
+          else if (compactReference.includes(compactQuery)) score += 60;
+          if (title === normalizedQuery) score += 50;
+          else if (title.includes(normalizedQuery)) score += 30;
+          score += tokens.filter((token) => text.includes(token)).length * 5;
+        }
+        return { listing, text, score };
+      })
+      .filter(({ listing, text }) => (
+        tokens.every((token) => text.includes(token)) &&
         (heroCategory === "All categories" || listing.category === heroCategory) &&
         (region === "All regions" || listing.region === region) &&
-        (condition === "All conditions" || listing.condition === condition)
-      );
-    });
-  }, [activeSearch, heroCategory, region, condition]);
+        (condition === "All conditions" || listing.condition === condition) &&
+        (manufacturer === "All manufacturers" || listing.manufacturer === manufacturer) &&
+        (compatibleModel === "All models" || listing.models.includes(compatibleModel)) &&
+        (availability === "All availability" || listing.availability === availability) &&
+        (!inStockOnly || listing.availability === "In stock")
+      ))
+      .sort((a, b) => {
+        if (sortBy === "Newest") return a.listing.ageDays - b.listing.ageDays;
+        if (sortBy === "Quantity") return b.listing.quantity - a.listing.quantity;
+        if (sortBy === "Reference A–Z") return a.listing.partNumber.localeCompare(b.listing.partNumber);
+        return b.score - a.score || a.listing.ageDays - b.listing.ageDays;
+      })
+      .map(({ listing }) => listing);
+  }, [activeSearch, availability, compatibleModel, condition, heroCategory, inStockOnly, manufacturer, region, sortBy]);
+
+  const visibleResults = results.slice(0, showCount);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -249,6 +193,19 @@ export default function Home() {
     setHeroCategory(name);
     setActiveSearch("");
     document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function clearFilters() {
+    setActiveSearch("");
+    setQuery("");
+    setCondition("All conditions");
+    setRegion("All regions");
+    setHeroCategory("All categories");
+    setManufacturer("All manufacturers");
+    setCompatibleModel("All models");
+    setAvailability("All availability");
+    setInStockOnly(false);
+    setSortBy("Best match");
   }
 
   function toggleSaved(id: number) {
@@ -304,12 +261,12 @@ export default function Home() {
           <form className="hero-search" onSubmit={submitSearch}>
             <div className="search-heading">
               <span><PackageSearch size={20} /> Find locomotive parts</span>
-              <small>3,280 active listings</small>
+              <small>{listings.length} browsable demo listings</small>
             </div>
             <label className="search-keyword">
               <Search size={21} />
               <span className="sr-only">Part number or keyword</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Part number, component, or locomotive model" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Part / ref., OEM, engine family, model, system…" />
             </label>
             <div className="search-selects">
               <label>
@@ -324,8 +281,7 @@ export default function Home() {
                 <span>Region</span>
                 <select value={region} onChange={(event) => setRegion(event.target.value)}>
                   <option>All regions</option>
-                  <option>United States</option>
-                  <option>Canada</option>
+                  {regions.map((item) => <option key={item}>{item}</option>)}
                 </select>
                 <ChevronDown size={16} />
               </label>
@@ -333,7 +289,7 @@ export default function Home() {
             </div>
             <div className="popular-searches">
               <span>Popular:</span>
-              {["EMD 645", "GE 752", "Turbocharger", "26-C brake"].map((term) => (
+              {["EMD 645", "GE 752AH", "CCB-26", "GEVO radiator"].map((term) => (
                 <button key={term} type="button" onClick={() => { setQuery(term); setActiveSearch(term); document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" }); }}>{term}</button>
               ))}
             </div>
@@ -354,7 +310,7 @@ export default function Home() {
               <div className="eyebrow"><span /> Browse by system</div>
               <h2>Get to the right shelf, faster.</h2>
             </div>
-            <button className="arrow-link" type="button" onClick={() => { setHeroCategory("All categories"); document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" }); }}>View all 3,280 parts <ArrowRight size={17} /></button>
+            <button className="arrow-link" type="button" onClick={() => { setHeroCategory("All categories"); document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" }); }}>View all {listings.length} demo parts <ArrowRight size={17} /></button>
           </div>
           <div className="category-grid">
             {categories.map(({ name, count, icon: Icon }) => (
@@ -374,7 +330,7 @@ export default function Home() {
             <div>
               <div className="eyebrow"><span /> Live inventory</div>
               <h2>{activeSearch || heroCategory !== "All categories" ? "Search results" : "Featured and recent parts"}</h2>
-              <p>{results.length} demo listing{results.length === 1 ? "" : "s"} match your current search.</p>
+              <p>{results.length} listing{results.length === 1 ? "" : "s"} match across part references, OEMs, models, engine families, systems, and vendor metadata.</p>
             </div>
             <div className="view-note"><Clock3 size={16} /> Updated daily by vendors</div>
           </div>
@@ -386,19 +342,14 @@ export default function Home() {
                 <span>Condition</span>
                 <select value={condition} onChange={(event) => setCondition(event.target.value)}>
                   <option>All conditions</option>
-                  <option>New</option>
-                  <option>New Surplus</option>
-                  <option>Remanufactured</option>
-                  <option>Rebuilt</option>
-                  <option>Rebuildable Core</option>
+                  {conditions.map((item) => <option key={item}>{item}</option>)}
                 </select>
               </label>
               <label>
                 <span>Region</span>
                 <select value={region} onChange={(event) => setRegion(event.target.value)}>
                   <option>All regions</option>
-                  <option>United States</option>
-                  <option>Canada</option>
+                  {regions.map((item) => <option key={item}>{item}</option>)}
                 </select>
               </label>
               <label>
@@ -408,9 +359,29 @@ export default function Home() {
                   {categories.map((item) => <option key={item.name}>{item.name}</option>)}
                 </select>
               </label>
-              <label className="check-row"><input type="checkbox" /> <span>In-stock only</span></label>
-              <label className="check-row"><input type="checkbox" /> <span>Verified vendors</span></label>
-              <button className="clear-button" type="button" onClick={() => { setActiveSearch(""); setQuery(""); setCondition("All conditions"); setRegion("All regions"); setHeroCategory("All categories"); }}>Clear all filters</button>
+              <label>
+                <span>Manufacturer / OEM</span>
+                <select value={manufacturer} onChange={(event) => setManufacturer(event.target.value)}>
+                  <option>All manufacturers</option>
+                  {manufacturers.map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </label>
+              <label>
+                <span>Compatible model</span>
+                <select value={compatibleModel} onChange={(event) => setCompatibleModel(event.target.value)}>
+                  <option>All models</option>
+                  {compatibleModels.map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </label>
+              <label>
+                <span>Availability</span>
+                <select value={availability} onChange={(event) => setAvailability(event.target.value)}>
+                  <option>All availability</option>
+                  {availabilityOptions.map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </label>
+              <label className="check-row"><input type="checkbox" checked={inStockOnly} onChange={(event) => setInStockOnly(event.target.checked)} /> <span>In-stock only</span></label>
+              <button className="clear-button" type="button" onClick={clearFilters}>Clear all filters</button>
               <div className="filter-help">
                 <MessageSquareText size={19} />
                 <strong>Can’t find it?</strong>
@@ -420,26 +391,51 @@ export default function Home() {
             </aside>
 
             <div className="listing-results">
+              <form className="results-toolbar" onSubmit={submitSearch}>
+                <label className="results-search">
+                  <Search size={17} />
+                  <span className="sr-only">Search within inventory</span>
+                  <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search reference, OEM, model, engine, system, or keyword" />
+                </label>
+                <label className="sort-control">
+                  <span>Sort</span>
+                  <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+                    <option>Best match</option>
+                    <option>Newest</option>
+                    <option>Quantity</option>
+                    <option>Reference A–Z</option>
+                  </select>
+                </label>
+                <button className="button button-dark button-small" type="submit">Search</button>
+              </form>
+              <div className="results-summary">
+                <strong>Showing {Math.min(showCount, results.length)} of {results.length}</strong>
+                <span>Try a manufacturer code such as D77, GEB13, AR10, 994-600, or CCB-26.</span>
+              </div>
               {results.length === 0 ? (
                 <div className="empty-state">
                   <PackageSearch size={34} />
                   <h3>No exact matches yet</h3>
                   <p>Clear a filter or post a wanted request so vendors can come to you.</p>
-                  <button className="button button-dark" type="button" onClick={() => { setActiveSearch(""); setCondition("All conditions"); setRegion("All regions"); setHeroCategory("All categories"); }}>Show all inventory</button>
+                  <button className="button button-dark" type="button" onClick={clearFilters}>Show all inventory</button>
                 </div>
-              ) : results.map((listing) => (
+              ) : visibleResults.map((listing) => (
                 <article className="listing-card" key={listing.id}>
                   <button className="listing-image" type="button" onClick={() => { setSelectedListing(listing); setMessageSent(false); }} aria-label={`View ${listing.title}`}>
-                    <img src={listing.image} alt={listing.title} />
+                    <img src={asset(listing.image)} alt={listing.title} />
                     {listing.featured && <span className="featured-label"><Sparkles size={12} /> Featured</span>}
                     <span className="condition-label">{listing.condition}</span>
                   </button>
                   <div className="listing-body">
-                    <div className="listing-kicker"><span>{listing.category}</span><small>{listing.posted}</small></div>
+                    <div className="listing-kicker"><span>{listing.category} · {listing.subcategory}</span><small>{listing.posted}</small></div>
                     <button className="listing-title" type="button" onClick={() => { setSelectedListing(listing); setMessageSent(false); }}>{listing.title}</button>
-                    <div className="part-number">Part # <strong>{listing.partNumber}</strong></div>
+                    <div className="part-number">Part / listing ref. <strong>{listing.partNumber}</strong></div>
                     <div className="model-tags">
                       {listing.models.slice(0, 3).map((model) => <span key={model}>{model}</span>)}
+                    </div>
+                    <div className="listing-attributes">
+                      <span><Factory size={13} /> {listing.manufacturer}</span>
+                      <span><Clock3 size={13} /> {listing.availability} · {listing.leadTime}</span>
                     </div>
                     <div className="listing-location"><MapPin size={15} /> {listing.location} <span>·</span> Qty {listing.quantity}</div>
                     <div className="vendor-line"><BadgeCheck size={16} /><span><strong>{listing.vendor}</strong><small>{listing.vendorSince}</small></span></div>
@@ -452,6 +448,11 @@ export default function Home() {
                   </div>
                 </article>
               ))}
+              {showCount < results.length && (
+                <button className="button button-outline load-more" type="button" onClick={() => setShowCount((current) => current + 12)}>
+                  Show 12 more parts <ArrowRight size={16} />
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -538,17 +539,27 @@ export default function Home() {
       </footer>
 
       {selectedListing && (
-        <div className="modal-backdrop" role="presentation" onMouseDown={() => setSelectedListing(null)}>
-          <section className="listing-modal" role="dialog" aria-modal="true" aria-labelledby="listing-modal-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedListing(null); }}>
+          <section className="listing-modal" role="dialog" aria-modal="true" aria-labelledby="listing-modal-title">
             <button className="modal-close" type="button" aria-label="Close listing" onClick={() => setSelectedListing(null)}><X /></button>
-            <div className="modal-image"><img src={selectedListing.image} alt={selectedListing.title} />{selectedListing.featured && <span className="featured-label"><Sparkles size={12} /> Featured</span>}</div>
+            <div className="modal-image"><img src={asset(selectedListing.image)} alt={selectedListing.title} />{selectedListing.featured && <span className="featured-label"><Sparkles size={12} /> Featured</span>}</div>
             <div className="modal-content">
               <div className="modal-detail">
-                <div className="listing-kicker"><span>{selectedListing.category}</span><small>Posted {selectedListing.posted}</small></div>
+                <div className="listing-kicker"><span>{selectedListing.category} · {selectedListing.subcategory}</span><small>Posted {selectedListing.posted}</small></div>
                 <h2 id="listing-modal-title">{selectedListing.title}</h2>
-                <div className="spec-grid"><div><span>Part number</span><strong>{selectedListing.partNumber}</strong></div><div><span>Condition</span><strong>{selectedListing.condition}</strong></div><div><span>Quantity</span><strong>{selectedListing.quantity} available</strong></div><div><span>Location</span><strong>{selectedListing.location}</strong></div></div>
+                <div className="spec-grid">
+                  <div><span>Part / listing reference</span><strong>{selectedListing.partNumber}</strong></div>
+                  <div><span>Manufacturer / OEM</span><strong>{selectedListing.manufacturer}</strong></div>
+                  <div><span>Condition</span><strong>{selectedListing.condition}</strong></div>
+                  <div><span>Quantity</span><strong>{selectedListing.quantity} available</strong></div>
+                  <div><span>Engine family</span><strong>{selectedListing.engineFamily}</strong></div>
+                  <div><span>Application</span><strong>{selectedListing.application}</strong></div>
+                  <div><span>Availability</span><strong>{selectedListing.availability} · {selectedListing.leadTime}</strong></div>
+                  <div><span>Location</span><strong>{selectedListing.location}</strong></div>
+                </div>
                 <h3>Compatible models</h3><div className="model-tags">{selectedListing.models.map((model) => <span key={model}>{model}</span>)}</div>
                 <h3>About this part</h3><p>{selectedListing.description}</p>
+                <p className="compatibility-note"><ShieldCheck size={15} /> Compatibility is indicative. Confirm locomotive serial, engine build, electrical rating, gear ratio, and applicable railroad requirements with the vendor before ordering.</p>
                 <div className="modal-vendor"><div className="vendor-logo">{selectedListing.vendor.split(" ").map((word) => word[0]).slice(0, 2).join("")}</div><div><span>Listed by</span><strong>{selectedListing.vendor} <BadgeCheck size={16} /></strong><small>{selectedListing.vendorSince}</small></div><button type="button">View profile <ExternalLink size={14} /></button></div>
               </div>
               <aside className="contact-panel">

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, BadgeCheck, BarChart3, Bell, Boxes, Building2, Check, ChevronDown, Eye, Flag, LayoutDashboard, MessageSquareText, MoreHorizontal, Search, ShieldCheck, Sparkles, Store, TrendingUp, UserPlus, Users, XCircle } from "lucide-react";
+import { ArrowLeft, BadgeCheck, BarChart3, Bell, Boxes, Check, ChevronDown, Eye, Flag, LayoutDashboard, MessageSquareText, MoreHorizontal, Search, ShieldCheck, Sparkles, Store, TrendingUp, UserPlus, Users, XCircle } from "lucide-react";
 import { useState } from "react";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
